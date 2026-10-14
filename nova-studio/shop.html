@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FAF9F6">
+  <meta name="description" content="NOVA STUDIO — những chiếc túi được tạo nên để đồng hành cùng nhịp sống của bạn.">
+  <title>Bộ sưu tập | NOVA STUDIO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/base.css">
+  <link rel="stylesheet" href="./assets/css/components.css">
+  <script type="module" src="./assets/js/app.js"></script>
+</head>
+<body data-page="shop">
+  <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
+  <div id="site-header"></div>
+  <main id="main-content" class="container page-section"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="./index.html">Trang chủ</a><span>/</span><span>Bộ sưu tập</span></nav><div class="page-heading"><p class="eyebrow">THE COLLECTION</p><h1>Tìm chiếc túi <em>của bạn.</em></h1><p>Thiết kế cho mọi nhịp sống, từ những ngày bận rộn đến khoảnh khắc đáng nhớ.</p></div><div class="shop-categories" id="shop-categories" role="group" aria-label="Danh mục sản phẩm"></div><div class="shop-layout"><aside class="shop-filter" id="shop-filter" aria-label="Bộ lọc"><div class="filter-heading"><h2>Bộ lọc</h2><button id="reset-filters" class="plain-link" type="button">Xóa bộ lọc</button></div><fieldset><legend>Kiểu dáng</legend><div id="category-filter"></div></fieldset><fieldset><legend>Màu sắc</legend><div id="color-filter" class="filter-colors"></div></fieldset><fieldset><legend>Giá tối đa</legend><output id="price-output" for="price-filter">6.000.000đ</output><input id="price-filter" type="range" min="2500000" max="6000000" step="100000" value="6000000"><div class="range-ends"><span>2,5 triệu</span><span>6 triệu</span></div></fieldset><div class="sidebar-promo"><div class="sidebar-promo-badge">Bộ sưu tập mới</div><div class="sidebar-promo-content"><p class="eyebrow">NOVA STUDIO 2026</p><h3>Signature Star Bags</h3><p>Thiết kế biểu tượng cùng chất da chọn lọc.</p></div></div></aside><section class="shop-results" aria-label="Sản phẩm"><div class="shop-toolbar"><span id="shop-count" aria-live="polite"></span><div><button id="filter-toggle" type="button" aria-controls="shop-filter" aria-expanded="false">Bộ lọc ＋</button><label for="shop-sort">Sắp xếp:</label><select id="shop-sort"><option value="new">Mới nhất</option><option value="best">Bán chạy</option><option value="price-asc">Giá tăng dần</option><option value="price-desc">Giá giảm dần</option></select></div></div><div class="product-grid" id="shop-grid"></div><div class="empty-page" id="shop-empty" hidden><h2>Chưa tìm thấy thiết kế phù hợp.</h2><p>Thử tìm kiếm hoặc chọn bộ lọc khác.</p><button class="button button-dark" id="empty-reset">Xóa bộ lọc <span>↗</span></button></div></section></div></main>
+  <div id="site-footer"></div>
+  <div class="toast-stack" id="toast-stack" role="status" aria-live="polite"></div>
+</body>
+</html>
