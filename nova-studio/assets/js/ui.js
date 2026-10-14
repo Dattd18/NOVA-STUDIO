@@ -13,6 +13,29 @@ let filtersOpen = false;
 let confirmedOrder = null;
 let searchTimer = null;
 
+const hasHtmlExt = location.pathname.endsWith('.html');
+function pageUrl(page, query = '') {
+  let base;
+  if (page === 'index' || page === 'home' || page === '') {
+    base = hasHtmlExt ? './index.html' : './';
+  } else {
+    base = hasHtmlExt ? `./${page}.html` : `./${page}`;
+  }
+  return query ? `${base}?${query}` : base;
+}
+
+function sanitizeStaticLinks() {
+  if (!hasHtmlExt && !location.protocol.startsWith('file')) {
+    document.querySelectorAll('a[href*=".html"]').forEach(a => {
+      const href = a.getAttribute('href');
+      if (href && (href.startsWith('./') || href.startsWith('/'))) {
+        const cleaned = href.replace(/\/?index\.html(\?|$)/, '/$1').replace(/\.html(\?|$)/, '$1');
+        a.setAttribute('href', cleaned);
+      }
+    });
+  }
+}
+
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 }
@@ -34,23 +57,23 @@ function headerMarkup() {
   return `<div class="site-announcement">Miễn phí vận chuyển cho đơn hàng từ 5.000.000đ &nbsp; · &nbsp; Mã NOVAVIP giảm 15%</div>
     <header class="site-header"><div class="header-inner container">
       <button class="menu-toggle" id="menu-toggle" aria-label="Mở menu" aria-controls="mobile-nav" aria-expanded="false">☰</button>
-      <a class="site-logo" href="./index.html" aria-label="NOVA STUDIO, trang chủ">NOVA<span>STUDIO</span></a>
+      <a class="site-logo" href="${pageUrl('index')}" aria-label="NOVA STUDIO, trang chủ">NOVA<span>STUDIO</span></a>
       <nav class="desktop-nav" aria-label="Điều hướng chính">
-        <a href="./index.html" class="${PAGE === 'home' ? 'current' : ''}">Trang chủ</a>
-        <div class="nav-dropdown ${shopCurrent ? 'current' : ''}"><a href="./shop.html" aria-haspopup="true">Bộ sưu tập</a><div class="nav-menu"><strong>Mua sắm theo kiểu dáng</strong><a href="./shop.html">Tất cả sản phẩm</a><a href="./shop.html?category=Tote">Túi Tote</a><a href="./shop.html?category=Crossbody">Túi Crossbody</a><a href="./shop.html?category=Shoulder">Túi Shoulder</a><a href="./shop.html?category=Mini">Túi Mini</a><a href="./shop.html?category=Clutch">Túi Clutch</a></div></div>
-        <a href="./shop.html?sort=new">Hàng mới</a><a href="./about.html" class="${PAGE === 'about' ? 'current' : ''}">Về NOVA</a>
+        <a href="${pageUrl('index')}" class="${PAGE === 'home' ? 'current' : ''}">Trang chủ</a>
+        <div class="nav-dropdown ${shopCurrent ? 'current' : ''}"><a href="${pageUrl('shop')}" aria-haspopup="true">Bộ sưu tập</a><div class="nav-menu"><strong>Mua sắm theo kiểu dáng</strong><a href="${pageUrl('shop')}">Tất cả sản phẩm</a><a href="${pageUrl('shop', 'category=Tote')}">Túi Tote</a><a href="${pageUrl('shop', 'category=Crossbody')}">Túi Crossbody</a><a href="${pageUrl('shop', 'category=Shoulder')}">Túi Shoulder</a><a href="${pageUrl('shop', 'category=Mini')}">Túi Mini</a><a href="${pageUrl('shop', 'category=Clutch')}">Túi Clutch</a></div></div>
+        <a href="${pageUrl('shop', 'sort=new')}">Hàng mới</a><a href="${pageUrl('about')}" class="${PAGE === 'about' ? 'current' : ''}">Về NOVA</a>
       </nav>
-      <div class="header-actions"><button class="header-icon" id="search-toggle" aria-label="Tìm kiếm" aria-expanded="false" aria-controls="search-panel"><span class="search-icon" aria-hidden="true"></span></button><a class="header-icon" href="${getState().user ? './account.html' : './login.html'}" aria-label="Tài khoản" ${['account', 'login', 'register'].includes(PAGE) ? 'aria-current="page"' : ''}><span class="person-icon" aria-hidden="true"></span></a><a class="header-icon" href="./wishlist.html" aria-label="Yêu thích" ${PAGE === 'wishlist' ? 'aria-current="page"' : ''}>♡<span class="count" id="wishlist-count" hidden>0</span></a><a class="header-icon" href="./cart.html" aria-label="Giỏ hàng" ${PAGE === 'cart' ? 'aria-current="page"' : ''}><span class="bag-icon" aria-hidden="true"></span><span class="count" id="cart-count" hidden>0</span></a></div>
-    </div><nav class="mobile-nav" id="mobile-nav" aria-label="Điều hướng di động"><a href="./index.html">Trang chủ</a><a href="./shop.html" class="mobile-all">Tất cả sản phẩm</a><strong>KIỂU DÁNG</strong><a href="./shop.html?category=Tote">Tote</a><a href="./shop.html?category=Crossbody">Crossbody</a><a href="./shop.html?category=Shoulder">Shoulder</a><a href="./shop.html?category=Mini">Mini</a><a href="./shop.html?category=Clutch">Clutch</a><strong>NOVA STUDIO</strong><a href="./about.html">Về chúng tôi</a><a href="${getState().user ? './account.html' : './login.html'}">Tài khoản</a></nav>
+      <div class="header-actions"><button class="header-icon" id="search-toggle" aria-label="Tìm kiếm" aria-expanded="false" aria-controls="search-panel"><span class="search-icon" aria-hidden="true"></span></button><a class="header-icon" href="${getState().user ? pageUrl('account') : pageUrl('login')}" aria-label="Tài khoản" ${['account', 'login', 'register'].includes(PAGE) ? 'aria-current="page"' : ''}><span class="person-icon" aria-hidden="true"></span></a><a class="header-icon" href="${pageUrl('wishlist')}" aria-label="Yêu thích" ${PAGE === 'wishlist' ? 'aria-current="page"' : ''}>♡<span class="count" id="wishlist-count" hidden>0</span></a><a class="header-icon" href="${pageUrl('cart')}" aria-label="Giỏ hàng" ${PAGE === 'cart' ? 'aria-current="page"' : ''}><span class="bag-icon" aria-hidden="true"></span><span class="count" id="cart-count" hidden>0</span></a></div>
+    </div><nav class="mobile-nav" id="mobile-nav" aria-label="Điều hướng di động"><a href="${pageUrl('index')}">Trang chủ</a><a href="${pageUrl('shop')}" class="mobile-all">Tất cả sản phẩm</a><strong>KIỂU DÁNG</strong><a href="${pageUrl('shop', 'category=Tote')}">Tote</a><a href="${pageUrl('shop', 'category=Crossbody')}">Crossbody</a><a href="${pageUrl('shop', 'category=Shoulder')}">Shoulder</a><a href="${pageUrl('shop', 'category=Mini')}">Mini</a><a href="${pageUrl('shop', 'category=Clutch')}">Clutch</a><strong>NOVA STUDIO</strong><a href="${pageUrl('about')}">Về chúng tôi</a><a href="${getState().user ? pageUrl('account') : pageUrl('login')}">Tài khoản</a></nav>
     <div class="search-panel" id="search-panel" hidden><form class="container" id="search-form"><label for="site-search">Tìm kiếm sản phẩm</label><input id="site-search" type="search" name="q" placeholder="Tên túi, kiểu dáng, chất liệu..." autocomplete="off"><button type="submit">Tìm kiếm ↗</button></form></div></header>`;
 }
 
 function footerMarkup() {
   return `<footer class="site-footer">
-    <div class="footer-feature"><div class="container footer-feature-inner"><div><p class="eyebrow">THE NOVA WORLD</p><h2>Mỗi ngày một cách <em>mang theo vẻ đẹp.</em></h2><p>Khám phá những thiết kế được chọn cho nhịp sống của riêng bạn.</p></div><a class="button button-light" href="./shop.html">Khám phá bộ sưu tập <span aria-hidden="true">↗</span></a></div></div>
+    <div class="footer-feature"><div class="container footer-feature-inner"><div><p class="eyebrow">THE NOVA WORLD</p><h2>Mỗi ngày một cách <em>mang theo vẻ đẹp.</em></h2><p>Khám phá những thiết kế được chọn cho nhịp sống của riêng bạn.</p></div><a class="button button-light" href="${pageUrl('shop')}">Khám phá bộ sưu tập <span aria-hidden="true">↗</span></a></div></div>
     <div class="footer-benefits container" aria-label="Thông tin mua sắm"><div><span class="benefit-index">01</span><div><strong>Miễn phí vận chuyển</strong><p>Với đơn hàng từ 5.000.000đ</p></div></div><div><span class="benefit-index">02</span><div><strong>Chọn theo phong cách</strong><p>Tìm kiếm theo kiểu dáng, màu và giá</p></div></div><div><span class="benefit-index">03</span><div><strong>Quản lý đơn hàng</strong><p>Xem lại lịch sử trong tài khoản</p></div></div></div>
-    <div class="footer-main container"><div class="footer-brand"><a class="site-logo" href="./index.html" aria-label="NOVA STUDIO, trang chủ">NOVA<span>STUDIO</span></a><p>Túi xách cho những khoảnh khắc bạn muốn giữ lại. Thiết kế tinh tế, dễ đồng hành cùng mỗi ngày.</p><a class="footer-email" href="mailto:hello@novastudio.vn">hello@novastudio.vn <span aria-hidden="true">↗</span></a></div><nav class="footer-column" aria-label="Danh mục sản phẩm"><h2>Sản phẩm</h2><a href="./shop.html">Tất cả sản phẩm</a><a href="./shop.html?category=Tote">Túi Tote</a><a href="./shop.html?category=Crossbody">Túi Crossbody</a><a href="./shop.html?category=Shoulder">Túi Shoulder</a><a href="./shop.html?category=Mini">Túi Mini</a><a href="./shop.html?category=Clutch">Túi Clutch</a></nav><nav class="footer-column" aria-label="Hỗ trợ khách hàng"><h2>Hỗ trợ mua hàng</h2><a href="./support.html#guide">Hướng dẫn mua hàng</a><a href="./support.html#shipping">Vận chuyển & thanh toán</a><a href="./support.html#orders">Theo dõi đơn hàng</a><a href="./support.html#faq">Câu hỏi thường gặp</a></nav><nav class="footer-column" aria-label="Thông tin NOVA STUDIO"><h2>Về NOVA</h2><a href="./about.html">Câu chuyện thương hiệu</a><a href="./account.html">Tài khoản của tôi</a><a href="./wishlist.html">Danh sách yêu thích</a><a href="./cart.html">Giỏ hàng</a></nav></div>
-    <div class="footer-bottom container"><span>© 2026 NOVA STUDIO. All rights reserved.</span><div><a href="./support.html">Trung tâm hỗ trợ</a><a href="./about.html">Về chúng tôi</a><span>Designed with intention.</span></div></div>
+    <div class="footer-main container"><div class="footer-brand"><a class="site-logo" href="${pageUrl('index')}" aria-label="NOVA STUDIO, trang chủ">NOVA<span>STUDIO</span></a><p>Túi xách cho những khoảnh khắc bạn muốn giữ lại. Thiết kế tinh tế, dễ đồng hành cùng mỗi ngày.</p><a class="footer-email" href="mailto:hello@novastudio.vn">hello@novastudio.vn <span aria-hidden="true">↗</span></a></div><nav class="footer-column" aria-label="Danh mục sản phẩm"><h2>Sản phẩm</h2><a href="${pageUrl('shop')}">Tất cả sản phẩm</a><a href="${pageUrl('shop', 'category=Tote')}">Túi Tote</a><a href="${pageUrl('shop', 'category=Crossbody')}">Túi Crossbody</a><a href="${pageUrl('shop', 'category=Shoulder')}">Túi Shoulder</a><a href="${pageUrl('shop', 'category=Mini')}">Túi Mini</a><a href="${pageUrl('shop', 'category=Clutch')}">Túi Clutch</a></nav><nav class="footer-column" aria-label="Hỗ trợ khách hàng"><h2>Hỗ trợ mua hàng</h2><a href="${pageUrl('support')}#guide">Hướng dẫn mua hàng</a><a href="${pageUrl('support')}#shipping">Vận chuyển & thanh toán</a><a href="${pageUrl('support')}#orders">Theo dõi đơn hàng</a><a href="${pageUrl('support')}#faq">Câu hỏi thường gặp</a></nav><nav class="footer-column" aria-label="Thông tin NOVA STUDIO"><h2>Về NOVA</h2><a href="${pageUrl('about')}">Câu chuyện thương hiệu</a><a href="${pageUrl('account')}">Tài khoản của tôi</a><a href="${pageUrl('wishlist')}">Danh sách yêu thích</a><a href="${pageUrl('cart')}">Giỏ hàng</a></nav></div>
+    <div class="footer-bottom container"><span>© 2026 NOVA STUDIO. All rights reserved.</span><div><a href="${pageUrl('support')}">Trung tâm hỗ trợ</a><a href="${pageUrl('about')}">Về chúng tôi</a><span>Designed with intention.</span></div></div>
   </footer>`;
 }
 
@@ -70,7 +93,7 @@ function priceMarkup(product) {
 function productCard(product) {
   const saved = getState().wishlist.includes(product.id);
   const label = product.isNew ? 'Mới' : product.originalPrice ? 'Ưu đãi' : product.isBestSeller ? 'Bán chạy' : '';
-  return `<article class="product-card"><div class="product-media"><a href="./product.html?id=${product.id}" aria-label="Xem ${escapeHtml(product.name)}"><img class="main" src="${product.images[0]}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async"><img class="alt" src="${product.images[1]}" alt="" loading="lazy" decoding="async"></a>${label ? `<span class="product-tag">${label}</span>` : ''}<button class="heart-button ${saved ? 'active' : ''}" data-action="favorite" data-id="${product.id}" aria-label="${saved ? 'Bỏ yêu thích' : 'Thêm vào yêu thích'} ${escapeHtml(product.name)}" aria-pressed="${saved}">${saved ? '♥' : '♡'}</button><button class="quick-button" data-action="quick-add" data-id="${product.id}">Thêm nhanh <span aria-hidden="true">＋</span></button></div><div class="product-info"><p>${product.category}</p><a href="./product.html?id=${product.id}">${escapeHtml(product.name)}</a>${priceMarkup(product)}<div class="mini-swatches" aria-label="${product.colors.length} màu sắc">${product.colors.map(color => `<span title="${escapeHtml(color.name)}" style="--color:${color.hex}"></span>`).join('')}</div></div></article>`;
+  return `<article class="product-card"><div class="product-media"><a href="${pageUrl('product', 'id=' + product.id)}" aria-label="Xem ${escapeHtml(product.name)}"><img class="main" src="${product.images[0]}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async"><img class="alt" src="${product.images[1]}" alt="" loading="lazy" decoding="async"></a>${label ? `<span class="product-tag">${label}</span>` : ''}<button class="heart-button ${saved ? 'active' : ''}" data-action="favorite" data-id="${product.id}" aria-label="${saved ? 'Bỏ yêu thích' : 'Thêm vào yêu thích'} ${escapeHtml(product.name)}" aria-pressed="${saved}">${saved ? '♥' : '♡'}</button><button class="quick-button" data-action="quick-add" data-id="${product.id}">Thêm nhanh <span aria-hidden="true">＋</span></button></div><div class="product-info"><p>${product.category}</p><a href="${pageUrl('product', 'id=' + product.id)}">${escapeHtml(product.name)}</a>${priceMarkup(product)}<div class="mini-swatches" aria-label="${product.colors.length} màu sắc">${product.colors.map(color => `<span title="${escapeHtml(color.name)}" style="--color:${color.hex}"></span>`).join('')}</div></div></article>`;
 }
 
 function renderHome() {
@@ -100,7 +123,7 @@ function updateShopUrl(filters) {
   if (filters.maxPrice < 6000000) params.set('max', filters.maxPrice);
   if (filters.query.trim()) params.set('q', filters.query.trim());
   if (filters.sort !== 'new') params.set('sort', filters.sort);
-  history.replaceState(null, '', `./shop.html${params.size ? `?${params}` : ''}`);
+  history.replaceState(null, '', pageUrl('shop', params.toString()));
 }
 
 function visibleProducts(filters) {
@@ -145,8 +168,8 @@ function productFromUrl() {
 function renderProduct() {
   const product = productFromUrl();
   if (!product) {
-    $('#product-breadcrumbs').innerHTML = `<a href="./index.html">Trang chủ</a><span>/</span><a href="./shop.html">Bộ sưu tập</a><span>/</span><span>Không tìm thấy</span>`;
-    $('#product-content').innerHTML = `<div class="empty-page"><h2>Không tìm thấy sản phẩm.</h2><a class="button button-dark" href="./shop.html">Xem bộ sưu tập <span>↗</span></a></div>`;
+    $('#product-breadcrumbs').innerHTML = `<a href="${pageUrl('index')}">Trang chủ</a><span>/</span><a href="${pageUrl('shop')}">Bộ sưu tập</a><span>/</span><span>Không tìm thấy</span>`;
+    $('#product-content').innerHTML = `<div class="empty-page"><h2>Không tìm thấy sản phẩm.</h2><a class="button button-dark" href="${pageUrl('shop')}">Xem bộ sưu tập <span>↗</span></a></div>`;
     $('#related-products').innerHTML = '';
     return;
   }
@@ -154,14 +177,14 @@ function renderProduct() {
   if (!productColor || !product.colors.some(color => color.name === productColor)) productColor = product.colors[0].name;
   const remaining = getAvailableStock(product.id) - getQuantityInCart(product.id);
   const saved = getState().wishlist.includes(product.id);
-  $('#product-breadcrumbs').innerHTML = `<a href="./index.html">Trang chủ</a><span>/</span><a href="./shop.html">Bộ sưu tập</a><span>/</span><a href="./shop.html?category=${product.category}">${product.category}</a><span>/</span><span>${escapeHtml(product.name)}</span>`;
+  $('#product-breadcrumbs').innerHTML = `<a href="${pageUrl('index')}">Trang chủ</a><span>/</span><a href="${pageUrl('shop')}">Bộ sưu tập</a><span>/</span><a href="${pageUrl('shop', 'category=' + encodeURIComponent(product.category))}">${product.category}</a><span>/</span><span>${escapeHtml(product.name)}</span>`;
   $('#product-content').innerHTML = `<div class="product-detail"><div class="detail-gallery"><div class="detail-thumbs">${product.images.map((image, index) => `<button data-action="image" data-value="${index}" class="${productImage === index ? 'selected' : ''}" aria-label="Xem ảnh ${index + 1}" aria-pressed="${productImage === index}"><img src="${image}" alt=""></button>`).join('')}</div><img class="detail-main" src="${product.images[productImage]}" alt="${escapeHtml(product.name)} — góc nhìn ${productImage + 1}"></div><div class="detail-info"><p class="eyebrow">NOVA STUDIO / ${product.category}</p><h1>${escapeHtml(product.name)}</h1>${priceMarkup(product)}<p class="detail-lead">Một thiết kế tinh tế cho những ngày bạn muốn mang theo cả phong cách lẫn sự tiện dụng.</p><span class="detail-label">Màu sắc: ${escapeHtml(productColor)}</span><div class="detail-swatches">${product.colors.map(color => `<button data-action="product-color" data-value="${escapeHtml(color.name)}" class="${productColor === color.name ? 'selected' : ''}" title="${escapeHtml(color.name)}" aria-label="Chọn màu ${escapeHtml(color.name)}" aria-pressed="${productColor === color.name}"><span style="--color:${color.hex}"></span></button>`).join('')}</div><span class="detail-label">Số lượng · còn ${Math.max(0, remaining)} chiếc</span><div class="quantity-control"><button data-action="product-decrease" aria-label="Giảm số lượng">−</button><span>${productQuantity}</span><button data-action="product-increase" aria-label="Tăng số lượng">＋</button></div><button class="button button-dark" data-action="product-add" ${remaining < 1 ? 'disabled' : ''}>${remaining < 1 ? 'Hết hàng' : `Thêm vào giỏ · ${formatPrice(product.price * productQuantity)}`} <span aria-hidden="true">↗</span></button><button class="heart-inline" data-action="favorite" data-id="${product.id}">${saved ? '♥ Đã lưu vào yêu thích' : '♡ Lưu vào yêu thích'}</button><div class="detail-specs"><p><span>Chất liệu</span><strong>${escapeHtml(product.material)}</strong></p><p><span>Kích thước</span><strong>${escapeHtml(product.dimensions)}</strong></p><p><span>Đánh giá</span><strong>${product.rating.toFixed(1)} / 5</strong></p><p><span>Mã sản phẩm</span><strong>${product.id}</strong></p></div></div></div>`;
   $('#related-products').innerHTML = PRODUCTS.filter(item => item.category === product.category && item.id !== product.id).slice(0, 4).map(productCard).join('');
 }
 
 function renderWishlist() {
   const products = getState().wishlist.map(getProduct).filter(Boolean);
-  $('#wishlist-content').innerHTML = products.length ? `<div class="shop-toolbar"><span>${products.length} sản phẩm đã lưu</span></div><div class="product-grid">${products.map(productCard).join('')}</div>` : `<div class="empty-cart"><span aria-hidden="true">♡</span><h2>Chưa có thiết kế yêu thích.</h2><p>Lưu lại những chiếc túi khiến bạn rung động.</p><a class="button button-dark" href="./shop.html">Khám phá bộ sưu tập <span>↗</span></a></div>`;
+  $('#wishlist-content').innerHTML = products.length ? `<div class="shop-toolbar"><span>${products.length} sản phẩm đã lưu</span></div><div class="product-grid">${products.map(productCard).join('')}</div>` : `<div class="empty-cart"><span aria-hidden="true">♡</span><h2>Chưa có thiết kế yêu thích.</h2><p>Lưu lại những chiếc túi khiến bạn rung động.</p><a class="button button-dark" href="${pageUrl('shop')}">Khám phá bộ sưu tập <span>↗</span></a></div>`;
 }
 
 function summaryRows() {
@@ -172,29 +195,29 @@ function summaryRows() {
 function renderCart() {
   const { cart, coupon } = getState();
   if (!cart.length) {
-    $('#cart-lines').innerHTML = `<div class="empty-cart"><span aria-hidden="true">▢</span><h2>Giỏ hàng đang trống.</h2><p>Hãy chọn một thiết kế dành cho bạn.</p><a class="button button-dark" href="./shop.html">Khám phá sản phẩm <span>↗</span></a></div>`;
+    $('#cart-lines').innerHTML = `<div class="empty-cart"><span aria-hidden="true">▢</span><h2>Giỏ hàng đang trống.</h2><p>Hãy chọn một thiết kế dành cho bạn.</p><a class="button button-dark" href="${pageUrl('shop')}">Khám phá sản phẩm <span>↗</span></a></div>`;
     $('#cart-summary').innerHTML = '';
     return;
   }
   $('#cart-lines').innerHTML = cart.map(item => {
     const product = getProduct(item.id);
     if (!product) return '';
-    return `<article class="cart-line"><a href="./product.html?id=${item.id}"><img src="${product.images[0]}" alt="${escapeHtml(product.name)}"></a><div><h2><a href="./product.html?id=${item.id}">${escapeHtml(product.name)}</a></h2><p>Màu: ${escapeHtml(item.color)}</p><p>${product.category}</p><div class="quantity-control"><button data-action="cart-minus" data-id="${item.id}" data-color="${escapeHtml(item.color)}" aria-label="Giảm số lượng">−</button><span>${item.quantity}</span><button data-action="cart-plus" data-id="${item.id}" data-color="${escapeHtml(item.color)}" aria-label="Tăng số lượng">＋</button></div></div><div class="cart-line-price"><strong>${formatPrice(product.price * item.quantity)}</strong><button class="plain-link" data-action="cart-remove" data-id="${item.id}" data-color="${escapeHtml(item.color)}">Xóa</button></div></article>`;
-  }).join('') + `<a class="cart-continue" href="./shop.html">← Tiếp tục mua sắm</a>`;
+    return `<article class="cart-line"><a href="${pageUrl('product', 'id=' + item.id)}"><img src="${product.images[0]}" alt="${escapeHtml(product.name)}"></a><div><h2><a href="${pageUrl('product', 'id=' + item.id)}">${escapeHtml(product.name)}</a></h2><p>Màu: ${escapeHtml(item.color)}</p><p>${product.category}</p><div class="quantity-control"><button data-action="cart-minus" data-id="${item.id}" data-color="${escapeHtml(item.color)}" aria-label="Giảm số lượng">−</button><span>${item.quantity}</span><button data-action="cart-plus" data-id="${item.id}" data-color="${escapeHtml(item.color)}" aria-label="Tăng số lượng">＋</button></div></div><div class="cart-line-price"><strong>${formatPrice(product.price * item.quantity)}</strong><button class="plain-link" data-action="cart-remove" data-id="${item.id}" data-color="${escapeHtml(item.color)}">Xóa</button></div></article>`;
+  }).join('') + `<a class="cart-continue" href="${pageUrl('shop')}">← Tiếp tục mua sắm</a>`;
   const totals = getCartTotals();
-  $('#cart-summary').innerHTML = `<div class="summary-box"><h2>Tóm tắt đơn hàng</h2><p class="shipping-text">${totals.remaining ? `Mua thêm <strong>${formatPrice(totals.remaining)}</strong> để miễn phí vận chuyển` : 'Đơn hàng đã được miễn phí vận chuyển'}</p><div class="shipping-track" aria-hidden="true"><span style="width:${Math.min(100, totals.subtotal / 5000000 * 100)}%"></span></div><form id="coupon-form" class="coupon-form"><input name="coupon" value="${coupon || ''}" placeholder="Mã giảm giá" aria-label="Mã giảm giá"><button type="submit">Áp dụng</button></form>${coupon ? `<p class="coupon-note">Đã áp dụng ${coupon}</p>` : ''}${summaryRows()}<a class="button button-dark" href="./checkout.html">Tiến hành thanh toán <span>↗</span></a></div>`;
+  $('#cart-summary').innerHTML = `<div class="summary-box"><h2>Tóm tắt đơn hàng</h2><p class="shipping-text">${totals.remaining ? `Mua thêm <strong>${formatPrice(totals.remaining)}</strong> để miễn phí vận chuyển` : 'Đơn hàng đã được miễn phí vận chuyển'}</p><div class="shipping-track" aria-hidden="true"><span style="width:${Math.min(100, totals.subtotal / 5000000 * 100)}%"></span></div><form id="coupon-form" class="coupon-form"><input name="coupon" value="${coupon || ''}" placeholder="Mã giảm giá" aria-label="Mã giảm giá"><button type="submit">Áp dụng</button></form>${coupon ? `<p class="coupon-note">Đã áp dụng ${coupon}</p>` : ''}${summaryRows()}<a class="button button-dark" href="${pageUrl('checkout')}">Tiến hành thanh toán <span>↗</span></a></div>`;
 }
 
 function checkoutForm() {
   const user = getState().user;
   const { cart } = getState();
-  if (!cart.length) return `<div class="empty-cart"><span aria-hidden="true">▢</span><h2>Chưa có sản phẩm để thanh toán.</h2><p>Khám phá bộ sưu tập và chọn chiếc túi dành cho bạn.</p><a class="button button-dark" href="./shop.html">Xem sản phẩm <span>↗</span></a></div>`;
+  if (!cart.length) return `<div class="empty-cart"><span aria-hidden="true">▢</span><h2>Chưa có sản phẩm để thanh toán.</h2><p>Khám phá bộ sưu tập và chọn chiếc túi dành cho bạn.</p><a class="button button-dark" href="${pageUrl('shop')}">Xem sản phẩm <span>↗</span></a></div>`;
   return `<div class="checkout-layout"><form id="checkout-form" class="checkout-panel" novalidate><h2>Thông tin giao hàng</h2><div class="field-grid"><div class="field"><label for="ship-name">Họ và tên *</label><input id="ship-name" name="name" value="${escapeHtml(user?.name || '')}" autocomplete="name" required><small></small></div><div class="field"><label for="ship-phone">Số điện thoại *</label><input id="ship-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="0912345678" required><small></small></div><div class="field wide"><label for="ship-email">Email *</label><input id="ship-email" name="email" type="email" value="${escapeHtml(user?.email || '')}" autocomplete="email" required><small></small></div><div class="field wide"><label for="ship-address">Địa chỉ nhận hàng *</label><input id="ship-address" name="address" autocomplete="street-address" placeholder="Số nhà, tên đường" required><small></small></div><div class="field"><label for="ship-city">Tỉnh / thành phố *</label><input id="ship-city" name="city" autocomplete="address-level1" required><small></small></div><div class="field"><label for="ship-district">Quận / huyện *</label><input id="ship-district" name="district" autocomplete="address-level2" required><small></small></div><div class="field wide"><label for="ship-note">Ghi chú giao hàng</label><textarea id="ship-note" name="note" placeholder="Thông tin thêm (không bắt buộc)"></textarea><small></small></div></div><h3>Phương thức thanh toán</h3><div class="payment-list"><label><input type="radio" name="payment" value="COD" checked> COD</label><label><input type="radio" name="payment" value="QR Banking"> QR Banking</label><label><input type="radio" name="payment" value="Card"> Thẻ ngân hàng</label></div><p class="payment-help" id="payment-help">Thanh toán khi nhận hàng.</p><button class="button button-dark" type="submit">Đặt hàng <span>↗</span></button></form><aside class="summary-box"><h2>Đơn hàng của bạn</h2><div class="checkout-items">${cart.map(item => { const product = getProduct(item.id); return `<p><span>${escapeHtml(product.name)} · ${escapeHtml(item.color)} × ${item.quantity}</span><span>${formatPrice(product.price * item.quantity)}</span></p>`; }).join('')}</div>${summaryRows()}</aside></div>`;
 }
 
 function renderCheckout() {
   if (confirmedOrder) {
-    $('#checkout-content').innerHTML = `<div class="success-panel"><div class="success-icon" aria-hidden="true">✓</div><p class="eyebrow">ORDER CONFIRMED</p><h2>Cảm ơn bạn!</h2><p>Đơn hàng <strong>#${confirmedOrder.id}</strong> đã được tiếp nhận.</p><p>Chúng tôi sẽ liên hệ qua ${escapeHtml(confirmedOrder.customer.email)} để xác nhận.</p><p>Phương thức thanh toán: ${escapeHtml(confirmedOrder.payment)}.</p><a class="button button-dark" href="./shop.html">Tiếp tục khám phá <span>↗</span></a></div>`;
+    $('#checkout-content').innerHTML = `<div class="success-panel"><div class="success-icon" aria-hidden="true">✓</div><p class="eyebrow">ORDER CONFIRMED</p><h2>Cảm ơn bạn!</h2><p>Đơn hàng <strong>#${confirmedOrder.id}</strong> đã được tiếp nhận.</p><p>Chúng tôi sẽ liên hệ qua ${escapeHtml(confirmedOrder.customer.email)} để xác nhận.</p><p>Phương thức thanh toán: ${escapeHtml(confirmedOrder.payment)}.</p><a class="button button-dark" href="${pageUrl('shop')}">Tiếp tục khám phá <span>↗</span></a></div>`;
     return;
   }
   $('#checkout-content').innerHTML = checkoutForm();
@@ -221,18 +244,18 @@ function validateCheckout(form) {
 function renderAccount() {
   const user = getState().user;
   if (!user) {
-    location.href = './login.html';
+    location.href = pageUrl('login');
     return;
   }
   const orders = getUserOrders();
-  $('#account-content').innerHTML = `<div class="account-dashboard"><aside class="profile-box"><p class="eyebrow">TÀI KHOẢN CỦA BẠN</p><h2>${escapeHtml(user.name)}</h2><p>${escapeHtml(user.email)}</p><button class="plain-link" data-action="logout">Đăng xuất</button></aside><section class="order-list"><h2>Lịch sử đơn hàng</h2>${orders.length ? orders.map(order => `<article class="order-entry"><h3><span>#${escapeHtml(order.id)}</span><span>${formatPrice(order.totals.total)}</span></h3><p>${new Intl.DateTimeFormat('vi-VN', { dateStyle: 'medium' }).format(new Date(order.createdAt))} · ${escapeHtml(order.status)} · ${escapeHtml(order.payment)}</p><p class="order-products">${order.items.map(item => `${escapeHtml(getProduct(item.id)?.name || item.id)} (${escapeHtml(item.color)}) × ${item.quantity}`).join(' · ')}</p></article>`).join('') : `<p class="account-note">Bạn chưa có đơn hàng nào. <a href="./shop.html">Khám phá sản phẩm →</a></p>`}</section></div>`;
+  $('#account-content').innerHTML = `<div class="account-dashboard"><aside class="profile-box"><p class="eyebrow">TÀI KHOẢN CỦA BẠN</p><h2>${escapeHtml(user.name)}</h2><p>${escapeHtml(user.email)}</p><button class="plain-link" data-action="logout">Đăng xuất</button></aside><section class="order-list"><h2>Lịch sử đơn hàng</h2>${orders.length ? orders.map(order => `<article class="order-entry"><h3><span>#${escapeHtml(order.id)}</span><span>${formatPrice(order.totals.total)}</span></h3><p>${new Intl.DateTimeFormat('vi-VN', { dateStyle: 'medium' }).format(new Date(order.createdAt))} · ${escapeHtml(order.status)} · ${escapeHtml(order.payment)}</p><p class="order-products">${order.items.map(item => `${escapeHtml(getProduct(item.id)?.name || item.id)} (${escapeHtml(item.color)}) × ${item.quantity}`).join(' · ')}</p></article>`).join('') : `<p class="account-note">Bạn chưa có đơn hàng nào. <a href="${pageUrl('shop')}">Khám phá sản phẩm →</a></p>`}</section></div>`;
 }
 
 function renderAuthPage() {
   const container = $('#auth-content');
   if (!container) return;
   if (getState().user) {
-    location.href = './account.html';
+    location.href = pageUrl('account');
     return;
   }
   const isLogin = authMode === 'login';
@@ -335,7 +358,7 @@ function handleAction(button) {
       authMode = value;
       if (['login', 'register'].includes(PAGE)) {
         try {
-          history.replaceState(null, '', `./${value}.html`);
+          history.replaceState(null, '', pageUrl(value));
           document.title = (value === 'login' ? 'Đăng nhập' : 'Đăng ký tài khoản') + ' | NOVA STUDIO';
         } catch (_) {}
         renderAuthPage();
@@ -348,7 +371,7 @@ function handleAction(button) {
       logout();
       toast('Đã đăng xuất.');
       setTimeout(() => {
-        location.href = './login.html';
+        location.href = pageUrl('login');
       }, 350);
     }
   } catch (error) { toast(error.message, true); }
@@ -405,7 +428,7 @@ function bindEvents() {
     if (event.target.id === 'search-form') {
       event.preventDefault();
       const query = event.target.elements.q.value.trim();
-      location.href = `./shop.html${query ? `?q=${encodeURIComponent(query)}` : ''}`;
+      location.href = pageUrl('shop', query ? `q=${encodeURIComponent(query)}` : '');
     }
     if (event.target.id === 'coupon-form') {
       event.preventDefault();
@@ -425,7 +448,7 @@ function bindEvents() {
           toast('Đăng nhập thành công!');
         }
         setTimeout(() => {
-          location.href = './account.html';
+          location.href = pageUrl('account');
         }, 400);
       } catch (error) { toast(error.message, true); }
     }
@@ -452,4 +475,5 @@ export function initUI() {
   subscribe(renderPage);
   renderPage();
   if (PAGE === 'shop') $('#site-search').value = getState().filters.query;
+  sanitizeStaticLinks();
 }
