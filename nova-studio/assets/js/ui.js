@@ -57,7 +57,7 @@ function headerMarkup() {
   return `<div class="site-announcement">Miễn phí vận chuyển cho đơn hàng từ 5.000.000đ &nbsp; · &nbsp; Mã NOVAVIP giảm 15%</div>
     <header class="site-header"><div class="header-inner container">
       <button class="menu-toggle" id="menu-toggle" aria-label="Mở menu" aria-controls="mobile-nav" aria-expanded="false">☰</button>
-      <a class="site-logo" href="${pageUrl('index')}" aria-label="NOVA STUDIO, trang chủ">NOVA<span>STUDIO</span></a>
+      <a class="site-logo" href="${pageUrl('index')}" aria-label="NOVA STUDIO, trang chủ"><img src="./assets/image/nova-studio-logo.png" alt="" width="1994" height="789"></a>
       <nav class="desktop-nav" aria-label="Điều hướng chính">
         <a href="${pageUrl('index')}" class="${PAGE === 'home' ? 'current' : ''}">Trang chủ</a>
         <div class="nav-dropdown ${shopCurrent ? 'current' : ''}"><a href="${pageUrl('shop')}" aria-haspopup="true">Bộ sưu tập</a><div class="nav-menu"><strong>Mua sắm theo kiểu dáng</strong><a href="${pageUrl('shop')}">Tất cả sản phẩm</a><a href="${pageUrl('shop', 'category=Tote')}">Túi Tote</a><a href="${pageUrl('shop', 'category=Crossbody')}">Túi Crossbody</a><a href="${pageUrl('shop', 'category=Shoulder')}">Túi Shoulder</a><a href="${pageUrl('shop', 'category=Mini')}">Túi Mini</a><a href="${pageUrl('shop', 'category=Clutch')}">Túi Clutch</a></div></div>
@@ -72,7 +72,7 @@ function footerMarkup() {
   return `<footer class="site-footer">
     <div class="footer-feature"><div class="container footer-feature-inner"><div><p class="eyebrow">THE NOVA WORLD</p><h2>Mỗi ngày một cách <em>mang theo vẻ đẹp.</em></h2><p>Khám phá những thiết kế được chọn cho nhịp sống của riêng bạn.</p></div><a class="button button-light" href="${pageUrl('shop')}">Khám phá bộ sưu tập <span aria-hidden="true">↗</span></a></div></div>
     <div class="footer-benefits container" aria-label="Thông tin mua sắm"><div><span class="benefit-index">01</span><div><strong>Miễn phí vận chuyển</strong><p>Với đơn hàng từ 5.000.000đ</p></div></div><div><span class="benefit-index">02</span><div><strong>Chọn theo phong cách</strong><p>Tìm kiếm theo kiểu dáng, màu và giá</p></div></div><div><span class="benefit-index">03</span><div><strong>Quản lý đơn hàng</strong><p>Xem lại lịch sử trong tài khoản</p></div></div></div>
-    <div class="footer-main container"><div class="footer-brand"><a class="site-logo" href="${pageUrl('index')}" aria-label="NOVA STUDIO, trang chủ">NOVA<span>STUDIO</span></a><p>Túi xách cho những khoảnh khắc bạn muốn giữ lại. Thiết kế tinh tế, dễ đồng hành cùng mỗi ngày.</p><a class="footer-email" href="mailto:hello@novastudio.vn">hello@novastudio.vn <span aria-hidden="true">↗</span></a></div><nav class="footer-column" aria-label="Danh mục sản phẩm"><h2>Sản phẩm</h2><a href="${pageUrl('shop')}">Tất cả sản phẩm</a><a href="${pageUrl('shop', 'category=Tote')}">Túi Tote</a><a href="${pageUrl('shop', 'category=Crossbody')}">Túi Crossbody</a><a href="${pageUrl('shop', 'category=Shoulder')}">Túi Shoulder</a><a href="${pageUrl('shop', 'category=Mini')}">Túi Mini</a><a href="${pageUrl('shop', 'category=Clutch')}">Túi Clutch</a></nav><nav class="footer-column" aria-label="Hỗ trợ khách hàng"><h2>Hỗ trợ mua hàng</h2><a href="${pageUrl('support')}#guide">Hướng dẫn mua hàng</a><a href="${pageUrl('support')}#shipping">Vận chuyển & thanh toán</a><a href="${pageUrl('support')}#orders">Theo dõi đơn hàng</a><a href="${pageUrl('support')}#faq">Câu hỏi thường gặp</a></nav><nav class="footer-column" aria-label="Thông tin NOVA STUDIO"><h2>Về NOVA</h2><a href="${pageUrl('about')}">Câu chuyện thương hiệu</a><a href="${pageUrl('account')}">Tài khoản của tôi</a><a href="${pageUrl('wishlist')}">Danh sách yêu thích</a><a href="${pageUrl('cart')}">Giỏ hàng</a></nav></div>
+    <div class="footer-main container"><div class="footer-brand"><a class="site-logo" href="${pageUrl('index')}" aria-label="NOVA STUDIO, trang chủ"><img src="./assets/image/nova-studio-logo.png" alt="" width="1994" height="789"></a><p>Túi xách cho những khoảnh khắc bạn muốn giữ lại. Thiết kế tinh tế, dễ đồng hành cùng mỗi ngày.</p><a class="footer-email" href="mailto:hello@novastudio.vn">hello@novastudio.vn <span aria-hidden="true">↗</span></a></div><nav class="footer-column" aria-label="Danh mục sản phẩm"><h2>Sản phẩm</h2><a href="${pageUrl('shop')}">Tất cả sản phẩm</a><a href="${pageUrl('shop', 'category=Tote')}">Túi Tote</a><a href="${pageUrl('shop', 'category=Crossbody')}">Túi Crossbody</a><a href="${pageUrl('shop', 'category=Shoulder')}">Túi Shoulder</a><a href="${pageUrl('shop', 'category=Mini')}">Túi Mini</a><a href="${pageUrl('shop', 'category=Clutch')}">Túi Clutch</a></nav><nav class="footer-column" aria-label="Hỗ trợ khách hàng"><h2>Hỗ trợ mua hàng</h2><a href="${pageUrl('support')}#guide">Hướng dẫn mua hàng</a><a href="${pageUrl('support')}#shipping">Vận chuyển & thanh toán</a><a href="${pageUrl('support')}#orders">Theo dõi đơn hàng</a><a href="${pageUrl('support')}#faq">Câu hỏi thường gặp</a></nav><nav class="footer-column" aria-label="Thông tin NOVA STUDIO"><h2>Về NOVA</h2><a href="${pageUrl('about')}">Câu chuyện thương hiệu</a><a href="${pageUrl('account')}">Tài khoản của tôi</a><a href="${pageUrl('wishlist')}">Danh sách yêu thích</a><a href="${pageUrl('cart')}">Giỏ hàng</a></nav></div>
     <div class="footer-bottom container"><span>© 2026 NOVA STUDIO. All rights reserved.</span><div><a href="${pageUrl('support')}">Trung tâm hỗ trợ</a><a href="${pageUrl('about')}">Về chúng tôi</a><span>Designed with intention.</span></div></div>
   </footer>`;
 }
@@ -264,11 +264,7 @@ function renderAuthPage() {
       <div class="auth-left">
         <div class="auth-left-top">
           <div class="auth-brand-logo">
-            <span class="auth-monogram">NV</span>
-            <div class="auth-brand-info">
-              <strong>NOVA STUDIO</strong>
-              <span>LEATHER ATELIER</span>
-            </div>
+            <img src="./assets/image/nova-studio-logo.png" alt="NOVA STUDIO" width="1994" height="789">
           </div>
           <div class="auth-headline">
             <h1>Welcome <span class="highlight">NOVA Studio</span></h1>
